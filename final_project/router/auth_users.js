@@ -15,11 +15,9 @@ const authenticatedUser = (username, password) => {
 	//returns boolean
 	//write code to check if username and password match the one we have in records.
 
-	const validUser = users.find((user) => {
-		user.username === username && user.password === password;
-	});
-
-	return validUser ? true : false;
+	return users.some(
+		(user) => user.username === username && user.password === password,
+	);
 };
 
 //only registered users can login
@@ -61,9 +59,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 		if (bookToBeReviewed.reviews[username]) {
 			books[isbn].reviews[username] = review;
 		} else {
-			books[isbn].reviews.push({
-				username: review,
-			});
+			book.reviews[username] = review;
 		}
 	} else {
 		res.status(404).json({ message: "Book Not Found" });

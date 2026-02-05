@@ -20,6 +20,7 @@ public_users.post("/register", (req, res) => {
 			username: username,
 			password: password,
 		});
+		res.send("User Registered Successfully");
 	}
 });
 
@@ -39,19 +40,18 @@ public_users.get("/", async function (req, res) {
 
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", async function (req, res) {
-	const getBookByIsbn = new Promise((resolve, reject) => {
-		const foundBook = books[parseInt(req.params.isbn)];
+	try {
+		const isbn = Number(req.params.isbn);
+		const foundBook = books[isbn];
 
 		if (foundBook) {
-			resolve(foundBook);
+			res.json(foundBook); // Use res.json() for objects
 		} else {
-			reject("Book Not Found");
+			res.status(404).json({ message: "Book Not Found" });
 		}
-	});
-
-	getBookByIsbn
-		.then((book) => res.send(book))
-		.catch(res.status(404).json({ message: "Book Not Found" }));
+	} catch (error) {
+		res.status(500).json({ message: "Server Error" });
+	}
 });
 
 // Get book details based on author
