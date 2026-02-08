@@ -26,7 +26,7 @@ regd_users.post("/login", (req, res) => {
 	const password = req.body.password;
 
 	if (!username || !password) {
-		res.status(404).json({ message: "Username or Password missing" });
+		return res.status(404).json({ message: "Username or Password missing" });
 	}
 
 	if (authenticatedUser(username, password)) {
@@ -34,7 +34,7 @@ regd_users.post("/login", (req, res) => {
 			{
 				data: password,
 			},
-			"acesss",
+			"access",
 			{ expiresIn: 60 * 60 },
 		);
 
@@ -52,17 +52,18 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
 	const username = req.session.authorization.username;
+	//console.log(username);
 	const isbn = parseInt(req.params.isbn);
 	const review = req.body.review;
 	const bookToBeReviewed = books[isbn];
 	if (bookToBeReviewed) {
 		if (bookToBeReviewed.reviews[username]) {
 			books[isbn].reviews[username] = review;
+			return res.status(200).json({ message: "Review updated successfully" });
 		} else {
-			book.reviews[username] = review;
+			books[isbn].reviews[username] = review;
+			return res.status(201).json({ message: "Review added successfully" });
 		}
-	} else {
-		res.status(404).json({ message: "Book Not Found" });
 	}
 });
 
